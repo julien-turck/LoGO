@@ -1,0 +1,18 @@
+{% extends 'operation/base.html' %}
+
+{% block title %}Liste des sous-opérations{% endblock %}
+
+{% block content %}
+<h1>Sous-opérations</h1>
+<a href="{% url 'ajouter_sous_operation' %}">Ajouter une sous-opération</a>
+<ul>
+    {% for s in sous_operations %}
+        <li>
+            <strong>{{ s.titre }}</strong> - {{ s.date }} - {{ s.get_statut_display }}<br>
+            Opération liée : {{ s.operation.titre }}
+        </li>
+    {% empty %}
+        <li>Aucune sous-opération enregistrée.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

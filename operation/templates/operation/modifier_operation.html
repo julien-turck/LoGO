@@ -1,0 +1,12 @@
+
+{% extends 'operation/base.html' %}
+{% block title %}Modifier l'opération{% endblock %}
+{% block content %}
+<h1>Modifier l'opération : {{ operation.titre }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer les modifications</button>
+</form>
+<a href="{% url 'afficher_operation' operation.id %}">← Retour à l'opération</a>
+{% endblock %}

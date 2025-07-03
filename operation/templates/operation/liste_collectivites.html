@@ -1,0 +1,51 @@
+{% extends 'operation/base.html' %}
+{% load static %}
+
+{% block title %}Liste des collectivités{% endblock %}
+
+{% block content %}
+<h2>Collectivités</h2>
+<a href="{% url 'ajouter_collectivite' %}">Ajouter une collectivité</a>
+<table id="table-collectivites" class="display">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Code INSEE</th>
+            <th>Élu</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in collectivites %}
+        <tr>
+            <td>{{ c.nom }}</td>
+            <td>{{ c.code_insee }}</td>
+            <td>{{ c.elu }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#table-collectivites').DataTable({
+            language: {
+                search: "Rechercher :",
+                lengthMenu: "Afficher _MENU_ éléments",
+                info: "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                infoEmpty: "Affichage de l'élément 0 à 0 sur 0 élément",
+                infoFiltered: "(filtré de _MAX_ éléments au total)",
+                zeroRecords: "Aucun élément à afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                paginate: {
+                    first: "Premier",
+                    previous: "Précédent",
+                    next: "Suivant",
+                    last: "Dernier"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

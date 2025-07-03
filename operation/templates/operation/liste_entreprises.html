@@ -1,0 +1,49 @@
+{% extends 'operation/base.html' %}
+{% load static %}
+
+{% block title %}Liste des entreprises{% endblock %}
+
+{% block content %}
+<h2>Entreprises</h2>
+<a href="{% url 'ajouter_entreprise' %}">Ajouter une entreprise</a>
+<table id="table-entreprises" class="display">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Domaine</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in entreprises %}
+        <tr>
+            <td>{{ e.nom }}</td>
+            <td>{{ e.domaine }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#table-entreprises').DataTable({
+            language: {
+                search: "Rechercher :",
+                lengthMenu: "Afficher _MENU_ éléments",
+                info: "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                infoEmpty: "Affichage de l'élément 0 à 0 sur 0 élément",
+                infoFiltered: "(filtré de _MAX_ éléments au total)",
+                zeroRecords: "Aucun élément à afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                paginate: {
+                    first: "Premier",
+                    previous: "Précédent",
+                    next: "Suivant",
+                    last: "Dernier"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

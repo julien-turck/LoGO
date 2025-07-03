@@ -1,0 +1,60 @@
+
+{% extends 'operation/base.html' %}
+{% load static %}
+
+{% block title %}
+    Liste des opérations
+{% endblock %}
+
+{% block content %}
+    <h2>Liste des opérations</h2>
+
+    <a href="{% url 'ajouter_operation' %}">Ajouter une opération</a>
+
+    <table id="table-operations" class="display">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Collectivité</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for op in operations %}
+                <tr>
+                    <td><a href="{% url 'afficher_operation' op.id %}">{{ op.titre }}</a></td>
+                    <td>{{ op.date }}</td>
+                    <td>{{ op.get_statut_display }}</td>
+                    <td>{{ op.collectivite.nom }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#table-operations').DataTable({
+            language: {
+                search: "Rechercher :",
+                lengthMenu: "Afficher _MENU_ éléments",
+                info: "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                infoEmpty: "Affichage de l'élément 0 à 0 sur 0 élément",
+                infoFiltered: "(filtré de _MAX_ éléments au total)",
+                zeroRecords: "Aucun élément à afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                paginate: {
+                    first: "Premier",
+                    previous: "Précédent",
+                    next: "Suivant",
+                    last: "Dernier"
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}
+

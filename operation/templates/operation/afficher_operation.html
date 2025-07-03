@@ -1,0 +1,37 @@
+
+{% extends 'operation/base.html' %}
+{% block title %}Détail de l'opération{% endblock %}
+{% block content %}
+<h1>{{ operation.titre }}</h1>
+<h2>Informations générales</h2>
+<p><strong>Description :</strong> {{ operation.description }}</p>
+<p><strong>Date :</strong> {{ operation.date }}</p>
+<p><strong>Statut :</strong> {{ operation.get_statut_display }}</p>
+<p><strong>Technicien :</strong> {{ operation.technicien.nom }}</p>
+{% if operation.collectivite %}
+    <p><strong>Collectivité :</strong> {{ operation.collectivite.nom }}</p>
+{% endif %}
+
+<a href="{% url 'modifier_operation' operation.id %}" style="padding: 8px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">
+    ✏️ Modifier cette opération
+</a>
+    
+<h2>Sous-opérations liées</h2>
+{% if sous_operations %}
+    <ul>
+        {% for s in sous_operations %}
+            <li>
+                <strong>{{ s.titre }}</strong> - {{ s.date }} - {{ s.get_statut_display }}
+                <br>
+                {{ s.description }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Aucune sous-opération liée à cette opération.</p>
+{% endif %}
+<a href="{% url 'ajouter_sous_operation_pour_operation' operation.id %}" style="padding: 8px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
+        ➕ Ajouter une sous-opération
+    </a>
+<a href="{% url 'liste_operations' %}">← Retour à la liste</a>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'operation/base.html' %}
+
+{% block title %}Ajouter une collectivité{% endblock %}
+
+{% block content %}
+<h1>Ajouter une collectivité</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer</button>
+</form>
+<a href="{% url 'liste_collectivites' %}">Retour à la liste</a>
+{% endblock %}
