@@ -12,10 +12,14 @@ urlpatterns = [
     # Collectivités
     path('collectivites/', views.liste_collectivites, name='liste_collectivites'),
     path('collectivites/ajouter/', views.ajouter_collectivite, name='ajouter_collectivite'),
+    path('collectivite/<int:pk>/', views.afficher_collectivite, name='afficher_collectivite'),
+    path('collectivite/<int:pk>/modifier/', views.modifier_collectivite, name='modifier_collectivite'),
 
     # Entreprises
     path('entreprises/', views.liste_entreprises, name='liste_entreprises'),
     path('entreprises/ajouter/', views.ajouter_entreprise, name='ajouter_entreprise'),
+    path('entreprise/<int:pk>/', views.afficher_entreprise, name='afficher_entreprise'),
+    path('entreprise/<int:pk>/modifier/', views.modifier_entreprise, name='modifier_entreprise'),
 
     # Sous-opérations
     path('sous-operations/', views.liste_sous_operations, name='liste_sous_operations'),

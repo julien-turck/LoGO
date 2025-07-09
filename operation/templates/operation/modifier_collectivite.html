@@ -1,0 +1,11 @@
+{% extends 'operation/base.html' %}
+{% block title %}Modifier la collectivité{% endblock %}
+{% block content %}
+<h1>Modifier la collectivité : {{ collectivite.nom }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Enregistrer les modifications</button>
+</form>
+<a href="{% url 'afficher_collectivite' collectivite.id %}">← Retour sur la fiche de la collectivité</a>
+{% endblock %}

@@ -2,36 +2,71 @@
 {% extends 'operation/base.html' %}
 {% block title %}Détail de l'opération{% endblock %}
 {% block content %}
-<h1>{{ operation.titre }}</h1>
-<h2>Informations générales</h2>
-<p><strong>Description :</strong> {{ operation.description }}</p>
-<p><strong>Date :</strong> {{ operation.date }}</p>
-<p><strong>Statut :</strong> {{ operation.get_statut_display }}</p>
-<p><strong>Technicien :</strong> {{ operation.technicien.nom }}</p>
-{% if operation.collectivite %}
-    <p><strong>Collectivité :</strong> {{ operation.collectivite.nom }}</p>
-{% endif %}
+    <a href="{% url 'liste_operations' %}">← Retour à la liste</a>
+    <h1>{{ operation.titre }}</h1>
 
-<a href="{% url 'modifier_operation' operation.id %}" style="padding: 8px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">
-    ✏️ Modifier cette opération
-</a>
-    
-<h2>Sous-opérations liées</h2>
-{% if sous_operations %}
-    <ul>
-        {% for s in sous_operations %}
-            <li>
-                <strong>{{ s.titre }}</strong> - {{ s.date }} - {{ s.get_statut_display }}
-                <br>
-                {{ s.description }}
-            </li>
+    <!-- Onglets -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab('infos')">Informations générales</button>
+        <button class="tab-button" onclick="openTab('operations')">Sous-opérations liées</button>
+    </div>
+
+    <!-- Contenu des onglets -->
+    <div id="infos" class="tab-content active">
+        <p><strong>Type :</strong> {{ operation.type_operation }}</p>
+        <p><strong>Service :</strong> {{ operation.service }}</p>
+        <p><strong>Description :</strong> {{ operation.description }}</p>
+        <p><strong>Date :</strong> {{ operation.date }}</p>
+        <p><strong>Statut :</strong> {{ operation.get_statut_display }}</p>
+        <p><strong>Technicien :</strong> {{ operation.technicien.nom }}</p>
+        {% if operation.collectivite %}
+            <p><strong>Collectivité :</strong> {{ operation.collectivite.nom }}</p>
+        {% endif %}
+
+        <a href="{% url 'modifier_operation' operation.id %}" style="padding: 8px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">
+            ✏️ Modifier cette opération
+        </a>
+    </div>
+    <div id="operations" class="tab-content">
+        {% for so in sous_operations %}
+            <div class="accordion-item">
+                <button class="accordion-header" onclick="toggleAccordion(this)">
+                    {{ so.titre }}
+                </button>
+                <div class="accordion-content">
+                    <p><strong>Description :</strong> {{ so.description }}</p>
+                    <p><strong>Date :</strong> {{ so.date }}</p>
+                    <p><strong>Statut :</strong> {{ so.get_statut_display }}</p>
+                    {% if so.entreprise %}
+                        <p><strong>Entreprise :</strong> {{ so.entreprise.nom }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p>Aucune sous-opération liée.</p>
         {% endfor %}
-    </ul>
-{% else %}
-    <p>Aucune sous-opération liée à cette opération.</p>
-{% endif %}
-<a href="{% url 'ajouter_sous_operation_pour_operation' operation.id %}" style="padding: 8px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
-        ➕ Ajouter une sous-opération
-    </a>
-<a href="{% url 'liste_operations' %}">← Retour à la liste</a>
+        <a href="{% url 'ajouter_sous_operation_pour_operation' operation.id %}" style="padding: 8px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
+            ➕ Ajouter une sous-opération
+        </a>
+    </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    function openTab(tabId) {
+        // Masquer tous les contenus
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        // Désactiver tous les boutons
+        document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+        // Activer le bon contenu et le bon bouton
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    function toggleAccordion(button) {
+        const content = button.nextElementSibling;
+        content.classList.toggle('active');
+    }
+</script>
+{% endblock %}
+

@@ -16,7 +16,7 @@
     <tbody>
         {% for e in entreprises %}
         <tr>
-            <td>{{ e.nom }}</td>
+            <td><a href="{% url 'afficher_entreprise' e.id %}">{{ e.nom }}</a></td>
             <td>{{ e.domaine }}</td>
         </tr>
         {% endfor %}

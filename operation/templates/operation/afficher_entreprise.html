@@ -1,0 +1,87 @@
+{% extends 'operation/base.html' %}
+{% block title %}Détail de l'entreprise{% endblock %}
+{% block content %}
+    <a href="{% url 'liste_entreprises' %}">← Retour à la liste</a>
+    <h1>{{ entreprise.nom }}</h1>
+    <h2>Informations générales</h2>
+    <!-- Onglets -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab('infos')">Informations générales</button>
+        <button class="tab-button" onclick="openTab('operations')">Opérations liées</button>
+    </div>
+
+    <!-- Contenu des onglets -->
+    <div id="infos" class="tab-content active">
+        <p><strong>Domaine :</strong> {{ entreprise.domaine }}</p>
+        <p><strong>Contact :</strong> {{ entreprise.contact }}</p>
+        <a href="{% url 'modifier_entreprise' entreprise.id %}" style="padding: 8px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">
+            ✏️ Modifier cette entreprise
+        </a>
+    </div>
+
+    <div id="operations" class="tab-content">
+        <table id="table-operations" class="display">
+            <thead>
+                <tr>
+                    <th>Titres</th>
+                    <th>Opération liée</th>
+                    <th>Statut</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in elements %}
+                    <tr>
+                        <td>{{e.titre}}</td>
+                        <td>
+                            {% if e.operation %}
+                                {{e.operation.titre}}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>{{ e.get_statut_display }}</td>
+                        <td>{{ e.date }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function openTab(tabId) {
+        // Masquer tous les contenus
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        // Désactiver tous les boutons
+        document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+        // Activer le bon contenu et le bon bouton
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const table = document.getElementById('table-operations');
+        if (table) {
+            new DataTable(table, {
+                language: {
+                    search: "Rechercher :",
+                    lengthMenu: "Afficher _MENU_ éléments",
+                    info: "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                    infoEmpty: "Affichage de l'élément 0 à 0 sur 0 élément",
+                    infoFiltered: "(filtré de _MAX_ éléments au total)",
+                    zeroRecords: "Aucun élément à afficher",
+                    emptyTable: "Aucune donnée disponible dans le tableau",
+                    paginate: {
+                        first: "Premier",
+                        previous: "Précédent",
+                        next: "Suivant",
+                        last: "Dernier"
+                    }
+                },
+            });
+        }
+    });
+</script>
+{% endblock %}

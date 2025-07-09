@@ -15,6 +15,7 @@
         <thead>
             <tr>
                 <th>Titre</th>
+                <th>Type</th>
                 <th>Date</th>
                 <th>Statut</th>
                 <th>Collectivité</th>
@@ -24,6 +25,7 @@
             {% for op in operations %}
                 <tr>
                     <td><a href="{% url 'afficher_operation' op.id %}">{{ op.titre }}</a></td>
+                    <td>{{ op.type_operation }}</td>
                     <td>{{ op.date }}</td>
                     <td>{{ op.get_statut_display }}</td>
                     <td>{{ op.collectivite.nom }}</td>

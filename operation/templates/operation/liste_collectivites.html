@@ -17,7 +17,7 @@
     <tbody>
         {% for c in collectivites %}
         <tr>
-            <td>{{ c.nom }}</td>
+            <td><a href="{% url 'afficher_collectivite' c.id %}">{{ c.nom }}</a></td>
             <td>{{ c.code_insee }}</td>
             <td>{{ c.elu }}</td>
         </tr>
