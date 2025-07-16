@@ -8,13 +8,22 @@ from .forms import OperationForm, CollectiviteForm, EntrepriseForm, SousOperatio
 def liste_operations(request):
     operations = Operation.objects.all().order_by('-date')
     # récupère l’ID de l’opération cible
-    operation_cible_id = request.GET.get('lier_a')  
+    operation_cible_id = request.GET.get('lier_a')
+    operation_cible = None  
     # Récupère les IDs des opérations déjà liées comme sous-opérations
     operations_deja_liees = SousOperation.objects.values_list('titre', flat=True)
+
+    if operation_cible_id:
+        try:
+            operation_cible = Operation.objects.get(id=operation_cible_id)
+        except Operation.DoesNotExist:
+            operation_cible = None
+
     return render(request, 'operation/liste_operations.html', {
         'operations': operations,
         'operation_cible_id': operation_cible_id,
-        'operations_deja_liees': operations_deja_liees
+        'operations_deja_liees': operations_deja_liees,
+        'operation_cible' : operation_cible
     })
 
 def ajouter_operation(request):
