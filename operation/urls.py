@@ -9,6 +9,8 @@ urlpatterns = [
     path('operation/<int:operation_id>/', views.afficher_operation, name='afficher_operation'),
     path('operation/<int:operation_id>/modifier/', views.modifier_operation, name='modifier_operation'),
     path('operation/<int:operation_cible_id>/lier/<int:operation_a_lier_id>/', views.lier_operation, name='lier_operation'),
+    path('operation/<int:operation_id>/ajouter-operation-liee/', views.ajouter_operation_liee, name='ajouter_operation_liee'),
+    path('operation/<int:operation_id>/ajouter-contrat/', views.ajouter_contrat, name='ajouter_contrat'),
 
     # Collectivités
     path('collectivites/', views.liste_collectivites, name='liste_collectivites'),

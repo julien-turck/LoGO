@@ -1,8 +1,8 @@
 
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Operation, Collectivite, Entreprise, SousOperation
-from .forms import OperationForm, CollectiviteForm, EntrepriseForm, SousOperationForm
+from .models import Operation, Collectivite, Entreprise, SousOperation, OperationLiee
+from .forms import OperationForm, CollectiviteForm, EntrepriseForm, SousOperationForm, OperationLieeForm
 
 #operations
 def liste_operations(request):
@@ -76,7 +76,7 @@ def lier_operation(request, operation_cible_id, operation_a_lier_id):
 
         # Crée une sous-opération liée
         if not existe_deja and not operation_a_lier.est_liee:
-            SousOperation.objects.create(
+            OperationLiee.objects.create(
                 titre=f"{operation_a_lier.titre}",
                 description=operation_a_lier.description,
                 date=operation_a_lier.date,
@@ -135,7 +135,7 @@ def liste_entreprises(request):
 
 def afficher_entreprise(request, pk):
     entreprise = get_object_or_404(Entreprise, pk=pk)
-    operations = entreprise.operations.all()
+    operations = entreprise.operations.filter(est_liee=False)
     sous_operations = entreprise.sous_operations.all()
     elements = list(operations) + list(sous_operations)
 
@@ -187,10 +187,32 @@ def delier_sous_operation(request, sous_operation_id):
     sous_operation = get_object_or_404(SousOperation, id=sous_operation_id)
     operation_id = sous_operation.operation.id
 
-    #on tente de retrouver l'opération liée via le titre exact
-    if sous_operation.operation_liee:
-        sous_operation.operation_liee.est_liee = False
-        sous_operation.operation_liee.save()
-
-    sous_operation.delete()
+    try:
+        operation_liee = OperationLiee.objects.get(id=sous_operation_id)
+        if operation_liee.operation_liee:
+            operation_liee.operation_liee.est_liee = False
+            operation_liee.operation_liee.save()
+        operation_liee.delete()
+    except OperationLiee.DoesNotExist:
+        sous_operation.delete()
     return redirect('afficher_operation', operation_id=operation_id)
+
+def ajouter_operation_liee(request, operation_id=None):
+    if request.method == 'POST':
+        form = OperationLieeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('afficher_operation', operation_id=form.cleaned_data['operation'].id)
+        else:
+            form = OperationLieeForm(initial={'operation': operation_id} if operation_id else None)
+        return render(request, 'operation/ajouter_operation_liee.html', {'form': form})
+
+def ajouter_contrat(request, operation_id=None):
+    if request.method == 'POST':
+        form = ContratForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('afficher_operation', operation_id=form.cleaned_data['operation'].id)
+        else:
+            form = ContratForm(initial={'operation': operation_id} if operation_id else None)
+        return render(request, 'operation/ajouter_contrat.html', {'form': form})

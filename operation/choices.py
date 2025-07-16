@@ -2,6 +2,17 @@
 # LoGO/choices.py
 
 # Liste des services
+
+CONTRAT_TITRE_CHOICES = [
+	('CT', 'CT'),
+	('DIAG_AMIANTE', 'Diag amiante'),
+	('DIAG_STRUCTURE', 'Diag structure'),
+	('MOE', 'MOE'),
+	('MTR', 'MTR'),
+	('SPS', 'SPS'),
+	('AUTRE', 'Autre')
+]
+
 SERVICE_CHOICES = [
 	('---', '---'),
 	('assistance juridique', 'Assistance juridique'),

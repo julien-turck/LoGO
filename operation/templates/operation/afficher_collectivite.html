@@ -32,7 +32,7 @@
                 {% for op in operations %}
                     <tr>
                         <td>{{ op.titre }}</td>
-                        <td>{{ op.type_operation }}</td>
+                        <td>{{ op.get_type_operation_display }}</td>
                         <td>{{ op.get_statut_display }}</td>
                         <td>{{ op.date }}</td>
                     </tr>

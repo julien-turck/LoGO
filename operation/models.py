@@ -1,6 +1,6 @@
 import datetime
 from django.db import models
-from .choices import SERVICE_CHOICES, TYPE_CHOICES
+from .choices import SERVICE_CHOICES, TYPE_CHOICES, STATUT_CHOICES, CONTRAT_TITRE_CHOICES
 
 
 class Technicien(models.Model):
@@ -30,12 +30,6 @@ class Entreprise(models.Model):
 
 class Operation(models.Model):
 
-    STATUT_CHOICES = [
-        ('A_FAIRE', 'À faire'),
-        ('EN_COURS', 'En cours'),
-        ('TERMINE', 'Terminé'),
-    ]
-
     titre = models.CharField(max_length=200, default="Ecrire ici l'intitulé de l'opération")
     description = models.TextField(default="Ecrire ici une description de l'opéraion")
     date = models.DateField(default=datetime.date.today)
@@ -51,11 +45,6 @@ class Operation(models.Model):
         return f"(self.titre) ({self.get_statut_display()})"
 
 class SousOperation(models.Model):
-    STATUT_CHOICES = [
-        ('A_FAIRE', 'À faire'),
-        ('EN_COURS', 'En cours'),
-        ('TERMINE', 'Terminé'),
-    ]
 
     titre = models.CharField(max_length=200)
     description = models.TextField(default="Écrire ici une description de la sous-opération")
@@ -63,7 +52,22 @@ class SousOperation(models.Model):
     statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='A_FAIRE')
     operation = models.ForeignKey('Operation', on_delete=models.CASCADE)
     entreprise = models.ForeignKey('Entreprise', on_delete=models.SET_NULL, related_name='sous_operations', null=True, blank=True)
-    operation_liee = models.ForeignKey('Operation', on_delete=models.SET_NULL, null=True, blank=True, related_name='lien_en_tant_que_sous_operation')
 
     def __str__(self):
         return f"{self.titre} ({self.get_statut_display()})"
+
+class OperationLiee(SousOperation):
+    operation_liee = models.ForeignKey(
+        'Operation',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='lien_en_tant_que_sous_operation'
+    )
+
+class Contrat(SousOperation):
+    libelle = models.CharField(max_length=100, choices=CONTRAT_TITRE_CHOICES)
+    libelle_personnalise = models.CharField(max_length=200, blank=True, null=True)
+
+    def get_titre_affiche(self):
+        return self.libelle_personnalise if self.titre == 'AUTRE' else self.get_titre_display()

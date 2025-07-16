@@ -24,7 +24,7 @@
             <thead>
                 <tr>
                     <th>Titres</th>
-                    <th>Opération liée</th>
+                    <th>Opération liée à</th>
                     <th>Statut</th>
                     <th>Date</th>
                 </tr>
@@ -32,7 +32,12 @@
             <tbody>
                 {% for e in elements %}
                     <tr>
-                        <td>{{e.titre}}</td>
+                        <td>
+                            {{e.titre}}
+                            {% if e.operation and e.operation_est_liee %}
+                                <span style="color: gray;">liée à une autre opération</span>
+                            {% endif %} 
+                        </td>
                         <td>
                             {% if e.operation %}
                                 {{e.operation.titre}}
