@@ -8,6 +8,7 @@ urlpatterns = [
     path('ajouter/', views.ajouter_operation, name='ajouter_operation'),
     path('operation/<int:operation_id>/', views.afficher_operation, name='afficher_operation'),
     path('operation/<int:operation_id>/modifier/', views.modifier_operation, name='modifier_operation'),
+    path('operation/<int:operation_cible_id>/lier/<int:operation_a_lier_id>/', views.lier_operation, name='lier_operation'),
 
     # Collectivités
     path('collectivites/', views.liste_collectivites, name='liste_collectivites'),
@@ -25,5 +26,6 @@ urlpatterns = [
     path('sous-operations/', views.liste_sous_operations, name='liste_sous_operations'),
     path('sous-operations/ajouter/', views.ajouter_sous_operation, name='ajouter_sous_operation'),    
     path('sous-operations/ajouter/<int:operation_id>/', views.ajouter_sous_operation, name='ajouter_sous_operation_pour_operation'),
+    path('sous-operation/<int:sous_operation_id>/delier/', views.delier_sous_operation, name='delier_sous_operation'),
 
 ]

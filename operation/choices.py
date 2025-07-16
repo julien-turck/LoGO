@@ -11,6 +11,12 @@ SERVICE_CHOICES = [
 	('voirie', 'Voirie'),
 ]
 
+STATUT_CHOICES = [
+	('A_FAIRE', 'À faire'),
+	('EN_COURS', 'En cours'),
+	('TERMINE', 'Terminé'),
+]
+
 # Liste des types d'opérations
 TYPE_CHOICES = [
 	('---', '---'),

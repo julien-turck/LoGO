@@ -29,6 +29,7 @@ class Entreprise(models.Model):
         return self.nom
 
 class Operation(models.Model):
+
     STATUT_CHOICES = [
         ('A_FAIRE', 'À faire'),
         ('EN_COURS', 'En cours'),
@@ -44,6 +45,7 @@ class Operation(models.Model):
     entreprise = models.ForeignKey(Entreprise, on_delete=models.SET_NULL, related_name="operations", null=True, blank=True)
     type_operation = models.CharField(max_length=3, choices=TYPE_CHOICES, default='---')
     service = models.CharField(max_length=50, choices=SERVICE_CHOICES, default='---')
+    est_liee = models.BooleanField(default=False)
 
     def __str__(self):
         return f"(self.titre) ({self.get_statut_display()})"
@@ -61,6 +63,7 @@ class SousOperation(models.Model):
     statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='A_FAIRE')
     operation = models.ForeignKey('Operation', on_delete=models.CASCADE)
     entreprise = models.ForeignKey('Entreprise', on_delete=models.SET_NULL, related_name='sous_operations', null=True, blank=True)
+    operation_liee = models.ForeignKey('Operation', on_delete=models.SET_NULL, null=True, blank=True, related_name='lien_en_tant_que_sous_operation')
 
     def __str__(self):
         return f"{self.titre} ({self.get_statut_display()})"

@@ -15,6 +15,7 @@
         <thead>
             <tr>
                 <th>Titre</th>
+                <th class="lier-colonne" style="display: none;">Lier opération</th>
                 <th>Type</th>
                 <th>Date</th>
                 <th>Statut</th>
@@ -23,13 +24,24 @@
         </thead>
         <tbody>
             {% for op in operations %}
-                <tr>
-                    <td><a href="{% url 'afficher_operation' op.id %}">{{ op.titre }}</a></td>
-                    <td>{{ op.type_operation }}</td>
-                    <td>{{ op.date }}</td>
-                    <td>{{ op.get_statut_display }}</td>
-                    <td>{{ op.collectivite.nom }}</td>
-                </tr>
+                {% if operation_cible_id != op.id|stringformat:"s" %}
+                    <tr>
+                        <td><a href="{% url 'afficher_operation' op.id %}">{{ op.titre }}</a></td>
+                        <td class="lier-colonne" style="display: none;">
+                            {% if operation_cible_id and not op.est_liee %}
+                                <a href="{% url 'lier_operation' operation_cible_id op.id %}" style="padding: 8px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;">
+                                    🔗 Lier cette opération
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Déjà liée</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ op.type_operation }}</td>
+                        <td>{{ op.date }}</td>
+                        <td>{{ op.get_statut_display }}</td>
+                        <td>{{ op.collectivite.nom }}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>
@@ -56,6 +68,14 @@
                 }
             }
         });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.has("lier_a")) {
+        const colonnes = document.querySelectorAll(".lier-colonne");
+        colonnes.forEach(col => col.style.display = "table-cell");
+        }
     });
 </script>
 {% endblock %}

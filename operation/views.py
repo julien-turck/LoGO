@@ -7,7 +7,15 @@ from .forms import OperationForm, CollectiviteForm, EntrepriseForm, SousOperatio
 #operations
 def liste_operations(request):
     operations = Operation.objects.all().order_by('-date')
-    return render(request, 'operation/liste_operations.html', {'operations': operations})
+    # récupère l’ID de l’opération cible
+    operation_cible_id = request.GET.get('lier_a')  
+    # Récupère les IDs des opérations déjà liées comme sous-opérations
+    operations_deja_liees = SousOperation.objects.values_list('titre', flat=True)
+    return render(request, 'operation/liste_operations.html', {
+        'operations': operations,
+        'operation_cible_id': operation_cible_id,
+        'operations_deja_liees': operations_deja_liees
+    })
 
 def ajouter_operation(request):
     if request.method == 'POST':
@@ -41,6 +49,41 @@ def modifier_operation(request, operation_id):
     else:
         form = OperationForm(instance=operation)
     return render(request, 'operation/modifier_operation.html', {'form': form, 'operation': operation})
+
+def lier_operation(request, operation_cible_id, operation_a_lier_id):
+    try:
+        operation_cible = Operation.objects.get(id=operation_cible_id)
+        operation_a_lier = Operation.objects.get(id=operation_a_lier_id)
+
+        #Empêche de lier une opération à elle-même
+        if operation_cible_id == operation_a_lier.id:
+            return redirect ('afficher_operation', operation_id=operation_cible.id)
+
+        # Vérifie si une sous-opération existe déjà
+        existe_deja = SousOperation.objects.filter(
+            operation=operation_cible,
+            titre__icontains=operation_a_lier.titre
+        ).exists()
+
+        # Crée une sous-opération liée
+        if not existe_deja and not operation_a_lier.est_liee:
+            SousOperation.objects.create(
+                titre=f"{operation_a_lier.titre}",
+                description=operation_a_lier.description,
+                date=operation_a_lier.date,
+                statut='A_FAIRE',
+                operation=operation_cible,
+                entreprise=operation_a_lier.entreprise,
+                operation_liee=operation_a_lier
+            )
+            operation_a_lier.est_liee = True
+            operation_a_lier.save()
+
+        return redirect('afficher_operation', operation_id=operation_cible.id)
+
+    except Operation.DoesNotExist:
+        # Optionnel : tu peux afficher un message d’erreur ou rediriger ailleurs
+        return HttpResponseRedirect(reverse('liste_operations'))
 
 # Collectivités
 def liste_collectivites(request):
@@ -130,3 +173,15 @@ def ajouter_sous_operation(request, operation_id=None):
         else:
             form = SousOperationForm()
     return render(request, 'operation/ajouter_sous_operation.html', {'form': form})
+
+def delier_sous_operation(request, sous_operation_id):
+    sous_operation = get_object_or_404(SousOperation, id=sous_operation_id)
+    operation_id = sous_operation.operation.id
+
+    #on tente de retrouver l'opération liée via le titre exact
+    if sous_operation.operation_liee:
+        sous_operation.operation_liee.est_liee = False
+        sous_operation.operation_liee.save()
+
+    sous_operation.delete()
+    return redirect('afficher_operation', operation_id=operation_id)
