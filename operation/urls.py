@@ -29,5 +29,4 @@ urlpatterns = [
     path('sous-operations/ajouter/', views.ajouter_sous_operation, name='ajouter_sous_operation'),    
     path('sous-operations/ajouter/<int:operation_id>/', views.ajouter_sous_operation, name='ajouter_sous_operation_pour_operation'),
     path('sous-operation/<int:sous_operation_id>/delier/', views.delier_sous_operation, name='delier_sous_operation'),
-
 ]

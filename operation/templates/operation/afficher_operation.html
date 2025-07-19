@@ -31,7 +31,11 @@
         {% for so in sous_operations %}
             <div class="accordion-item">
                 <button class="accordion-header" onclick="toggleAccordion(this)">
-                    {{ so.titre }}
+                    {% if so.contrat %}
+                        {{ so.contrat.libelle }}
+                    {% else %}
+                        {{ so.titre }}
+                    {% endif %}
                 </button>
                 <div class="accordion-content">
                     <p><strong>Description :</strong> {{ so.description }}</p>
@@ -48,8 +52,8 @@
         {% empty %}
             <p>Aucune sous-opération liée.</p>
         {% endfor %}
-        <a href="{% url 'ajouter_sous_operation_pour_operation' operation.id %}" style="padding: 8px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
-            ➕ Ajouter une sous-opération
+        <a href="{% url 'ajouter_contrat' operation.id %}" style="padding: 8px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">
+            ➕ Ajouter un contrat
         </a>
         <a href="{% url 'liste_operations' %}?lier_a={{ operation.id }}" style="padding: 8px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 4px;" >
             🔗 Lier une opération existante

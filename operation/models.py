@@ -55,6 +55,14 @@ class SousOperation(models.Model):
 
     def __str__(self):
         return f"{self.titre} ({self.get_statut_display()})"
+    
+    @property
+    def type_auto(self):
+        if hasattr(self, 'contrat'):
+            return 'Contrat'
+        elif hasattr(self, 'operationliee'):
+            return 'Opération liée'
+        return 'Sous-opération'
 
 class OperationLiee(SousOperation):
     operation_liee = models.ForeignKey(
@@ -65,9 +73,15 @@ class OperationLiee(SousOperation):
         related_name='lien_en_tant_que_sous_operation'
     )
 
+class LibelleContrat(models.Model):
+    libelle = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.libelle
+
 class Contrat(SousOperation):
-    libelle = models.CharField(max_length=100, choices=CONTRAT_TITRE_CHOICES)
-    libelle_personnalise = models.CharField(max_length=200, blank=True, null=True)
+    libelle = models.ForeignKey(LibelleContrat, on_delete=models.CASCADE, related_name="contrats")
 
     def get_titre_affiche(self):
-        return self.libelle_personnalise if self.titre == 'AUTRE' else self.get_titre_display()
+        return self.libelle.libelle
+

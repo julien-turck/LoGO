@@ -1,8 +1,8 @@
 
 
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Operation, Collectivite, Entreprise, SousOperation, OperationLiee
-from .forms import OperationForm, CollectiviteForm, EntrepriseForm, SousOperationForm, OperationLieeForm
+from .models import Operation, Collectivite, Entreprise, SousOperation, OperationLiee, LibelleContrat
+from .forms import OperationForm, CollectiviteForm, EntrepriseForm, SousOperationForm, OperationLieeForm, ContratForm
 
 #operations
 def liste_operations(request):
@@ -207,12 +207,39 @@ def ajouter_operation_liee(request, operation_id=None):
             form = OperationLieeForm(initial={'operation': operation_id} if operation_id else None)
         return render(request, 'operation/ajouter_operation_liee.html', {'form': form})
 
+
 def ajouter_contrat(request, operation_id=None):
     if request.method == 'POST':
-        form = ContratForm(request.POST)
+        print("Formulaire soumis")
+
+        nouveau_libelle = request.POST.get('nouveau_libelle', '').strip()
+        post_data = request.POST.copy()
+
+        if nouveau_libelle:
+            libelle_obj, created = LibelleContrat.objects.get_or_create(libelle=nouveau_libelle)
+            print("LibelleContrat créé ou récupéré :", libelle_obj)
+
+            # Injecte l'ID dans le champ 'libelle'
+            post_data['libelle'] = str(libelle_obj.id)
+
+        form = ContratForm(post_data)
+        # Mise à jour explicite du queryset
+        form.fields['libelle'].queryset = LibelleContrat.objects.all()
+
         if form.is_valid():
-            form.save()
-            return redirect('afficher_operation', operation_id=form.cleaned_data['operation'].id)
+            print("Formulaire valide")
+            contrat = form.save(commit=False)
+
+            # Sécurité : on force l'opération si elle n'est pas transmise correctement
+            if not contrat.operation_id and operation_id:
+                contrat.operation_id = operation_id
+
+            contrat.save()
+            print("Contrat enregistré :", contrat)
+            return redirect('afficher_operation', operation_id=contrat.operation.id)
         else:
-            form = ContratForm(initial={'operation': operation_id} if operation_id else None)
+            print("Formulaire invalide :", form.errors)
+            return render(request, 'operation/ajouter_contrat.html', {'form': form})
+    else:
+        form = ContratForm(initial={'operation': operation_id} if operation_id else None)
         return render(request, 'operation/ajouter_contrat.html', {'form': form})

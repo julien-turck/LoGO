@@ -1,6 +1,6 @@
 
 from django import forms
-from .models import Operation, Collectivite, Entreprise, SousOperation, OperationLiee, Contrat
+from .models import Operation, Collectivite, Entreprise, SousOperation, OperationLiee, Contrat, LibelleContrat
 
 class OperationForm(forms.ModelForm):
     class Meta:
@@ -32,14 +32,13 @@ class OperationLieeForm(forms.ModelForm):
         fields = ['titre', 'description', 'date', 'statut', 'operation', 'entreprise', 'operation_liee']
 
 class ContratForm(forms.ModelForm):
+
     class Meta:
         model = Contrat
-        fields = ['libelle', 'libelle_personnalise', 'description', 'date', 'statut', 'operation', 'entreprise']
+        fields = ['libelle', 'description', 'date', 'statut', 'operation', 'entreprise']
     
-    def clean(self):
-        cleaned_data = super().clean()
-        titre = cleaned_data.get('libelle')
-        titre_perso = cleaned_data.get('libelle_personnalise')
-
-        if titre == 'AUTRE' and not titre_perso:
-            self.add_error('libelle_personnalise', "veuillez préciser le titre personnalisé.")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['libelle'].choices = [
+            (lib.libelle, lib.libelle) for lib in LibelleContrat.objects.all()
+        ]

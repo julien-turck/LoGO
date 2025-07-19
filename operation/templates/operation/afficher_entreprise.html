@@ -33,10 +33,11 @@
                 {% for e in elements %}
                     <tr>
                         <td>
-                            {{e.titre}}
-                            {% if e.operation and e.operation_est_liee %}
-                                <span style="color: gray;">liée à une autre opération</span>
-                            {% endif %} 
+                            {% if e.contrat %}
+                                {{ e.contrat.libelle }} {{ e.contrat.libelle_personnalise }}
+                            {% else %}
+                                {{e.titre}}
+                            {% endif %}
                         </td>
                         <td>
                             {% if e.operation %}

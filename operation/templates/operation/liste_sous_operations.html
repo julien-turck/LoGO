@@ -4,15 +4,55 @@
 
 {% block content %}
 <h1>Sous-opérations</h1>
-<a href="{% url 'ajouter_sous_operation' %}">Ajouter une sous-opération</a>
-<ul>
-    {% for s in sous_operations %}
-        <li>
-            <strong>{{ s.titre }}</strong> - {{ s.date }} - {{ s.get_statut_display }}<br>
-            Opération liée : {{ s.operation.titre }}
-        </li>
-    {% empty %}
-        <li>Aucune sous-opération enregistrée.</li>
-    {% endfor %}
-</ul>
+
+<table id="table-sous-operations" class="display">
+    <thead>
+        <tr>
+            <th>Titre / Libellé</th>
+            <th>Type</th>
+            <th>Opération liée</th>
+            <th>Statut</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in sous_operations %}
+        <tr>
+            <td>
+                {% if s.contrat %}
+                    {{ s.contrat.libelle }}
+                {% else %}
+                    {{ s.titre }}
+                {% endif %}
+            </td>
+            <td>{{ s.type_auto }}</td>
+            <td>{{ s.operation.titre }}</td>
+            <td>{{ s.get_statut_display }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#table-sous-operations').DataTable({
+            language: {
+                search: "Rechercher :",
+                lengthMenu: "Afficher _MENU_ éléments",
+                info: "Affichage de l'élément _START_ à _END_ sur _TOTAL_ éléments",
+                infoEmpty: "Affichage de l'élément 0 à 0 sur 0 élément",
+                infoFiltered: "(filtré de _MAX_ éléments au total)",
+                zeroRecords: "Aucun élément à afficher",
+                emptyTable: "Aucune donnée disponible dans le tableau",
+                paginate: {
+                    first: "Premier",
+                    previous: "Précédent",
+                    next: "Suivant",
+                    last: "Dernier"
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

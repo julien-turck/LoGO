@@ -4,7 +4,30 @@
   <h2>Ajouter un contrat</h2>
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.libelle.label_tag }}
+    {{ form.libelle }}
+    <button type="button" class="btn btn-sm btn-outil-secondary" onclick="toggleNewLibelleInput()">+</button>
+    <input type="text" name="nouveau_libelle" id="nouveau_libelle" style="display: none;" placeholder="Nouveau libellé">
+    {{ form.operation }}
+    {{ form.entreprise }}
+    {{ form.description }}
+    {{ form.date }}
+    {{ form.statut }}
     <button type="submit" class="btn btn-primary">Enregistrer</button>
   </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function toggleNewLibelleInput() {
+    var input = document.getElementById('nouveau_libelle');
+    if (input.style.display === 'none') {
+      input.style.display = 'inline-block';
+      input.focus();
+    } else {
+      input.style.display = 'none';
+      input.value = '';
+    }
+  }
+</script>
 {% endblock %}
